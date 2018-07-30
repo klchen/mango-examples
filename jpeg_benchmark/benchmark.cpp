@@ -110,6 +110,30 @@ void save_jpeg(const char* filename, const Surface& surface)
 }
 
 // ----------------------------------------------------------------------
+// stb
+// ----------------------------------------------------------------------
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
+Surface stb_load_jpeg(const char* filename)
+{
+    int width, height, bpp;
+    u8* rgb = stbi_load(filename, &width, &height, &bpp, 3);
+ 
+    return Surface(width, height, FORMAT_R8G8B8, width * 3, rgb);
+}
+
+void stb_save_jpeg(const char* filename, const Surface& surface)
+{
+    stbi_write_jpg(filename, surface.width, surface.height, 3, surface.image, surface.width*3);
+    stbi_image_free(surface.image);
+}
+
+// ----------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------
 
@@ -132,24 +156,36 @@ int main(int argc, const char* argv[])
 
     uint64 time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
+    printf("load stb:     ");
+
+    Surface s_stb = stb_load_jpeg(argv[1]);
+
+    uint64 time2 = timer.ms();
+    printf("%d ms\n", int(time2 - time1));
     printf("load mango:   ");
 
     Bitmap bitmap(argv[1]);
 
-    uint64 time2 = timer.ms();
-    printf("%d ms\n", int(time2 - time1));
+    uint64 time3 = timer.ms();
+    printf("%d ms\n", int(time3 - time2));
     printf("save libjpeg: ");
 
     save_jpeg("output-libjpeg.jpg", s);
 
-    uint64 time3 = timer.ms();
-    printf("%d ms\n", int(time3 - time2));
+    uint64 time4 = timer.ms();
+    printf("%d ms\n", int(time4 - time3));
+    printf("save stb:     ");
+
+    stb_save_jpeg("output-stb.jpg", s_stb);
+
+    uint64 time5 = timer.ms();
+    printf("%d ms\n", int(time5 - time4));
     printf("save mango:   ");
 
     bitmap.save("output-mango.jpg");
 
-    uint64 time4 = timer.ms();
-    printf("%d ms\n", int(time4 - time3));
+    uint64 time6 = timer.ms();
+    printf("%d ms\n", int(time6 - time5));
 
     printf("image: %d x %d\n", bitmap.width, bitmap.height);
 }
