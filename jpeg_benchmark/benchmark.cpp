@@ -6,6 +6,8 @@
 
 using namespace mango;
 
+//#define TEST_OCV
+
 // ----------------------------------------------------------------------
 // warmup()
 // ----------------------------------------------------------------------
@@ -134,6 +136,28 @@ void stb_save_jpeg(const char* filename, const Surface& surface)
 }
 
 // ----------------------------------------------------------------------
+// OpenCV
+// ----------------------------------------------------------------------
+
+#ifdef TEST_OCV
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+using namespace cv;
+Surface ocv_load_jpeg(const char* filename)
+{
+    cv::Mat image;
+    image = cv::imread(filename, CV_LOAD_IMAGE_COLOR);
+
+    int width = image.cols;
+    int height = image.rows;
+    return Surface(width, height, FORMAT_B8G8R8, width * 3, image.data);
+}
+
+#endif
+
+// ----------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------
 
@@ -148,44 +172,98 @@ int main(int argc, const char* argv[])
     warmup(argv[1]);
 
     Timer timer;
+    uint64 time0;
+    uint64 time1;
 
-    uint64 time0 = timer.ms();
+    // ------------------------------------------------------------------
+
     printf("load libjpeg: ");
+    time0 = timer.ms();
 
     Surface s = load_jpeg(argv[1]);
 
-    uint64 time1 = timer.ms();
+    time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
+
+    // ------------------------------------------------------------------
+
     printf("load stb:     ");
+    time0 = timer.ms();
 
     Surface s_stb = stb_load_jpeg(argv[1]);
 
-    uint64 time2 = timer.ms();
-    printf("%d ms\n", int(time2 - time1));
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+
+    // ------------------------------------------------------------------
+
     printf("load mango:   ");
+    time0 = timer.ms();
 
     Bitmap bitmap(argv[1]);
 
-    uint64 time3 = timer.ms();
-    printf("%d ms\n", int(time3 - time2));
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+
+    // ------------------------------------------------------------------
+
+#ifdef TEST_OCV
+    printf("load opencv:  ");
+    time0 = timer.ms();
+
+    Surface s_ocv = ocv_load_jpeg(argv[1]);
+
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+#endif
+
+    // ------------------------------------------------------------------
+
+    printf("\n");
     printf("save libjpeg: ");
+    time0 = timer.ms();
 
     save_jpeg("output-libjpeg.jpg", s);
 
-    uint64 time4 = timer.ms();
-    printf("%d ms\n", int(time4 - time3));
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+
+    // ------------------------------------------------------------------
+
     printf("save stb:     ");
+    time0 = timer.ms();
 
     stb_save_jpeg("output-stb.jpg", s_stb);
 
-    uint64 time5 = timer.ms();
-    printf("%d ms\n", int(time5 - time4));
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+
+    // ------------------------------------------------------------------
+
     printf("save mango:   ");
+    time0 = timer.ms();
 
     bitmap.save("output-mango.jpg");
 
-    uint64 time6 = timer.ms();
-    printf("%d ms\n", int(time6 - time5));
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
 
+    // ------------------------------------------------------------------
+
+#ifdef TEST_OCV
+    printf("save opencv:  ");
+
+    cv::Mat ocv_image = cv::imread(argv[1], CV_LOAD_IMAGE_COLOR); // loading is not timed
+    time0 = timer.ms();
+
+    cv::imwrite("output-ocv.jpg", ocv_image);
+
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+#endif
+
+    // ------------------------------------------------------------------
+
+    printf("\n");
     printf("image: %d x %d\n", bitmap.width, bitmap.height);
 }
