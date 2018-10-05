@@ -1,12 +1,12 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/core/core.hpp>
 
 using namespace mango;
 
-void example1(const uint8* data, size_t size)
+void example1(uint8* data, size_t size)
 {
     // compute (maximum) compressed buffer size
     size_t compressed_size = lz4::bound(size);
@@ -37,3 +37,7 @@ void example2(Memory compressed, size_t size)
     first compure the bound() so that the correct amount of memory can
     be allocated. All memory management is left to the caller.
 */
+
+int main()
+{
+}

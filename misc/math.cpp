@@ -1,7 +1,8 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
+#include <vector>
 #include <mango/math/math.hpp>
 
 using namespace mango;
@@ -102,7 +103,7 @@ void example10(const std::vector<Box>& boxes, const Ray& ray)
     for (auto& box : boxes)
     {
         IntersectRange is;
-        if (is.intersect(box, fast))
+        if (is.intersect(fast, box))
         {
             float3 enter = ray.origin + ray.direction * is.t0;
             float3 leave = ray.origin + ray.direction * is.t1;
@@ -112,7 +113,11 @@ void example10(const std::vector<Box>& boxes, const Ray& ray)
 
 void example11()
 {
-    float4 linear(1.0f, 0.5f, 0.5f, 1.0f);
-    float4 nonlinear = srgb_encode(linear);
-    linear = srgb_decode(nonlinear);
+    float32x4 linear(1.0f, 0.5f, 0.5f, 1.0f);
+    float32x4 nonlinear = linear_to_srgb(linear);
+    linear = srgb_to_linear(nonlinear);
+}
+
+int main()
+{
 }

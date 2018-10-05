@@ -1,7 +1,8 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
+#include <vector>
 #include <mango/core/memory.hpp>
 
 using namespace mango;
@@ -41,7 +42,7 @@ void example2()
     delete [] buffer; // ERROR! 
 }
 
-void example3(VirtualMemory *v)
+void example3(VirtualMemory *vm)
 {
     // What on EARTH is VirtualMemory!? It is a type of Memory that is created by some
     // unknown superpower, who also knows how to release the memory. For example, the MANGO
@@ -62,4 +63,8 @@ void example3(VirtualMemory *v)
     // make it possible to work with compressed files, memory mapped files, allocated memory buffers,
     // OS virtual memory and other kinds of memory using unified interface which is as light-weight
     // as raw pointers.
+}
+
+int main()
+{
 }

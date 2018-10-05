@@ -36,7 +36,7 @@ void example2(const Memory& memory, const std::string& filename)
     does the processing using a Memory block so these all examples are in fact
     convenience methods for the same mechanism doing the work under the hood.
 */
-void example3(const uint8* data, size_t size)
+void example3(uint8* data, size_t size)
 {
     Memory memory(data, size);
     Bitmap bitmap(memory, "jpg"); // we know it's a jpeg file
@@ -151,7 +151,10 @@ void example5(const Memory& memory, const std::string& extension)
         // can page out the data as the physical memory is needed somewhere else.
 
         // TL;DR - decode the image
-        decoder.decode(surface, 0, 0, 0);
+        decoder.decode(surface, 0, 0, 0, 0);
     }
 }
 
+int main()
+{
+}

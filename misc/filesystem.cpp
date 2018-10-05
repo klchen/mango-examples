@@ -1,8 +1,10 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/filesystem/filesystem.hpp>
+#include <mango/core/pointer.hpp>
+#include <mango/image/surface.hpp>
 
 using namespace mango;
 
@@ -13,7 +15,7 @@ void example1()
     // Iterate all objects in the folder
     for (auto info : path)
     {
-        printf("filename: %s ", info.name);
+        printf("filename: %s ", info.name.c_str());
         if (info.isDirectory())
             printf("(folder)\n");
         else
@@ -32,18 +34,9 @@ void example2()
     std::vector<char> buffer(size);
     std::memcpy(buffer.data(), file.data(), size);
 
-    // Or, we could treat the file as a stream -
-    // This will internally be a memcpy but with the Stream interface!
-    file.read(buffer.data(), size);
-
-    // Since it is a stream, we can plug endianess adapter into it
-    // (see endian.cpp for more information)
-    LittleEndianStream leStream = file; // le stream is French for "stream"
-    uint32 value = leStream.read32();
-
     // On the other hand, it is also a block of memory.. so endianess
     // aware pointer will also be a possible use case:
-    LittleEndianPointer p = file;
+    LittleEndianPointer p = Memory(file).address;
     uint32 value2 = p.read32();
     p += 8; // skip 8 bytes
     float value3 = p.read32f();
@@ -109,7 +102,7 @@ void example6(const Path& parent)
         {
             // recurse into subdirectories
             Path path(parent, i.name);
-            example5(path);
+            example6(path);
         }
     }
 
@@ -162,3 +155,7 @@ void example7()
     how the asset loading processing pipeline is built. We provide the low-level
     components which can be used as building blocks for higher level constructs.
 */
+
+int main()
+{
+}

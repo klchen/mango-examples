@@ -16,7 +16,7 @@ void example1(const uint8* p)
     p += 8;
 }
 
-void example2(const uint8* address)
+void example2(uint8* address)
 {
     // same as example1 but using "endian aware pointers"
     LittleEndianPointer p = address;
@@ -96,3 +96,7 @@ void example5(const uint8* p)
     The difference is that our way is less typing and always guaranteed
     to be correct and use the best available implementation.
 */
+
+int main()
+{
+}

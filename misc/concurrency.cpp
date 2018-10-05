@@ -1,10 +1,32 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2016 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
 
 using namespace mango;
+
+namespace {
+    void computeSomethingExpensive(int)
+    {
+    }
+
+    void computeSomethingExpensive()
+    {
+    }
+
+    void computeSomethingDependingOnPreviousStuff()
+    {
+    }
+
+    void computeStuff(int)
+    {
+    }
+
+    void computeOtherStuff(int)
+    {
+    }
+}
 
 void example1()
 {
@@ -107,7 +129,7 @@ void example3()
 
     for (int i = 0; i < 10; ++i)
     {
-        a.enqueue([] {
+        a.enqueue([i] {
             computeStuff(i);
         });
 
@@ -123,7 +145,7 @@ void example3()
         // concurrent tasks don't have any dependencies, except those which
         // are artificially created with execution barriers.
 
-        b.enqueue([] {
+        b.enqueue([i] {
             computeOtherStuff(i);
         });
     }
@@ -187,7 +209,7 @@ struct State
     std::vector<float> data;
 
     State(size_t size)
-    : data(size)
+        : data(size)
     {
         // initialize the data...
     }
@@ -213,7 +235,7 @@ void example6()
         // worker thread to complete will "turn off the lights". This way work can be
         // queued in the pool w/o having to synchronize before exiting this scope.
         q.enqueue([state, i] {
-            state.process(i, 64);
+            state->process(i, 64);
         });
     }
 
@@ -243,7 +265,7 @@ void example7()
             for (int j = 0; j < 40; ++j)
             {
                 x.enqueue([] {
-                    computeSomething();
+                    computeSomethingExpensive();
                 });
             }
             x.wait();
@@ -272,4 +294,8 @@ void example7()
     // task then use the queue wait. It's better to have implicit synchronization by
     // NOT issuing any tasks before the data is available (eg. trigger a task when the
     // data is known to be available). Just friendly advice, feel free to ignore and cry.
+}
+
+int main()
+{
 }

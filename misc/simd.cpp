@@ -1,8 +1,9 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2017 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/simd/simd.hpp>
+#include <mango/math/math.hpp>
 
 using namespace mango;
 
@@ -40,8 +41,6 @@ void example2()
     float4 e = select(a > b, d, c);
 }
 
-simd::float32x4 example3(simd::float32x4 v)
+int main()
 {
-    // SIMD optimized trigonometric functions (courtesy of Sleef)
-    return simd::sin(v);
 }
