@@ -1,0 +1,10 @@
+link_libraries(mango)
+
+add_executable(concurrency concurrency.cpp)
+add_executable(filesystem filesystem.cpp)
+add_executable(math math.cpp)
+add_executable(simd simd.cpp)
+add_executable(compress compress.cpp)
+add_executable(endian endian.cpp)
+add_executable(image_loading image_loading.cpp)
+add_executable(memory memory.cpp)
