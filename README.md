@@ -11,3 +11,7 @@ When linking some modules, the compiler will go into "insane mode" and complain 
 
 I have no strength to fight these problems so macOS users are on their own.
 A simple "c++ -O3 -std=c++14 foo.cpp -lmango -o foo.binary" works just fine the problem is probably somewhere in cmake/macOS/xcode toolchain. I give up.
+
+# binaries
+
+The compiled binaries in misc/ don't really "do" much; they are just used to check that the examples compile without errors.
