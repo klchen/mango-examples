@@ -51,7 +51,6 @@ void example1()
     // When we get here all of the issued tasks are guaranteed to be completed.
 }
 
-
 void example2()
 {
     ConcurrentQueue q;
@@ -62,60 +61,6 @@ void example2()
             computeSomethingExpensive(i);
         });
     }
-
-    // Insert execution barrier; tasks issued after the barrier will NOT
-    // be processed by the ThreadPool until ALL tasks in the queue BEFORE
-    // the barrier are completed.
-    q.barrier();
-
-    q.enqueue([] {
-        computeSomethingDependingOnPreviousStuff();
-    });
-
-    // Insert another barrier but for a different reason...
-    q.barrier();
-
-    // A good time to read about std::atomic variables and what they do :)
-    std::atomic<bool> done { false };
-
-    // Submit a task which sets the boolean
-    q.enqueue([&done] {
-        done = true;
-    });
-
-    while (!done) {
-        // This loop will waste CPU cycles until done equals true. This
-        // condition is satisfied ONLY after the task setting it true is
-        // executed in the ThreadPool. This won't happen until the tasks
-        // BEFORE the second barrier are complete. So, when this loop is
-        // finally done we know for a FACT that the tasks in the queue
-        // are complete.
-    }
-
-    // OK; synchronization like this is pointless on it's own since we can
-    // get the same effect with q.wait(). However, this pattern can be used
-    // as a building-block for greater things. The multicore-programming
-    // wisdom is that when your thread will block, don't put it into a pool.
-
-    // It would be very bad to block a pool with a sleeping thread.
-    // What you want to do is to launch free-standing thread for any
-    // activity that will block a thread. When a thread is being blocked
-    // for any reason (waiting for I/O, waiting for work to complete, etc.)
-    // this thread should be sleeping. A sleeping thread does not consume
-    // CPU time or energy. A sleeping thread is good.
-
-    // There are many ways to go about this. One way is to use std::promise
-    // and std::future which allow to wait-for-result, in practise, sleep
-    // until the result is available. This is pretty nice way to pair the
-    // MANGO ThreadPool with free-standing threads. The downside is that
-    // the communication "channel", if you will, is the heap. This implies
-    // dynamic memory allocation. This might be an issue for some so keep
-    // that in mind. It's the way of the modern computing world so whatever.
-
-    // The other approach is to use condition variables. These allow the
-    // result collector to sleep until notified that the results are
-    // available. Both work; which one is better choise depends on many
-    // factors which are outside the scope of this small code example.
 }
 
 void example3()
