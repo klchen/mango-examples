@@ -29,7 +29,7 @@ void example3(LittleEndianPointer& p)
 {
     float f = p.read32f();
     p += 20; // skip 20 bytes
-    half h = p.read16f();
+    float16 h = p.read16f();
     uint64 a = p.read64();
 }
 
