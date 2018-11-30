@@ -43,7 +43,8 @@ void libpng_load(const char* file_name)
         FILE *fp = fopen(file_name, "rb");
         //if (!fp)
         //        abort_("[read_png_file] File %s could not be opened for reading", file_name);
-        fread(header, 1, 8, fp);
+        size_t xx = fread(header, 1, 8, fp);
+        (void) xx;
         //if (png_sig_cmp(header, 0, 8))
         //        abort_("[read_png_file] File %s is not recognized as a PNG file", file_name);
 
@@ -108,7 +109,7 @@ void lode_decodeOneStep(const char* filename)
 
 // https://libspng.org/
 
-#include <spng/spng.h>
+#include <spng.h>
 
 Surface load_spng(const char* filename)
 {
@@ -264,7 +265,7 @@ int main(int argc, const char* argv[])
     libpng_load(filename);
 
     time1 = timer.us();
-    printf("%d us\n", int(time1 - time0));
+    printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
@@ -274,7 +275,7 @@ int main(int argc, const char* argv[])
     lode_decodeOneStep(filename);
 
     time1 = timer.us();
-    printf("%d us\n", int(time1 - time0));
+    printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
@@ -284,7 +285,7 @@ int main(int argc, const char* argv[])
     Surface s = load_spng(filename);
 
     time1 = timer.us();
-    printf("%d us\n", int(time1 - time0));
+    printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
@@ -294,7 +295,7 @@ int main(int argc, const char* argv[])
     Surface s_stb = stb_load_png(filename);
 
     time1 = timer.us();
-    printf("%d us\n", int(time1 - time0));
+    printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
@@ -304,10 +305,13 @@ int main(int argc, const char* argv[])
     Bitmap bitmap(filename);
 
     time1 = timer.us();
-    printf("%d us\n", int(time1 - time0));
+    printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
     printf("\n");
     printf("image: %d x %d\n", bitmap.width, bitmap.height);
+
+    //bitmap.save("debug.png");
+    //s_stb.save("debug.jpg");
 }
