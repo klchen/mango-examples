@@ -7,6 +7,7 @@
 #include <mango/image/surface.hpp>
 
 using namespace mango;
+using namespace mango::filesystem;
 
 void example1()
 {
