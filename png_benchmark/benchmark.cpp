@@ -5,6 +5,7 @@
 #include <mango/mango.hpp>
 
 using namespace mango;
+using namespace mango::filesystem;
 
 // ----------------------------------------------------------------------
 // warmup()
@@ -108,6 +109,8 @@ void lode_decodeOneStep(const char* filename)
 // ----------------------------------------------------------------------
 
 // https://libspng.org/
+
+#if 0
 
 #include <spng.h>
 
@@ -223,6 +226,8 @@ Surface load_spng(const char* filename)
     return s;
 }
 
+#endif
+
 // ----------------------------------------------------------------------
 // stb
 // ----------------------------------------------------------------------
@@ -278,7 +283,7 @@ int main(int argc, const char* argv[])
     printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
-
+#if 0
     printf("load spng:    ");
     time0 = timer.us();
 
@@ -286,7 +291,7 @@ int main(int argc, const char* argv[])
 
     time1 = timer.us();
     printf("%5d ms\n", int((time1 - time0)/1000));
-
+#endif
     // ------------------------------------------------------------------
 
     printf("load stb:     ");
