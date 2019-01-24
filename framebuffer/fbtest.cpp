@@ -60,6 +60,13 @@ public:
         color++;
         s.clear(c, c, c, 1.0f);
 
+        // draw debugging rectangles
+        // should be: red, green, blue and white box at top-left corner
+        Surface(s,  0, 0, 32, 32).clear(1.0f, 0.0f, 0.0f, 1.0);
+        Surface(s, 32, 0, 32, 32).clear(0.0f, 1.0f, 0.0f, 1.0);
+        Surface(s, 64, 0, 32, 32).clear(0.0f, 0.0f, 1.0f, 1.0);
+        Surface(s, 96, 0, 32, 32).clear(1.0f, 1.0f, 1.0f, 1.0);
+
         unlock();
         present();
     }
