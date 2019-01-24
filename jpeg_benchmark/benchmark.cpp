@@ -7,7 +7,7 @@
 using namespace mango;
 using namespace mango::filesystem;
 
-//#define TEST_OCV
+#define TEST_OCV
 
 // ----------------------------------------------------------------------
 // warmup()
@@ -126,7 +126,7 @@ Surface stb_load_jpeg(const char* filename)
 {
     int width, height, bpp;
     u8* rgb = stbi_load(filename, &width, &height, &bpp, 3);
- 
+
     return Surface(width, height, FORMAT_R8G8B8, width * 3, rgb);
 }
 
