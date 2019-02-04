@@ -55,9 +55,9 @@ void example4(Stream& stream)
 
 struct SomeHeader
 {
-    uint16be a;
-    uint16be b;
-    uint32be c;
+    u16be a;
+    u16be b;
+    u32be c;
 };
 
 void example5(const uint8* p)
