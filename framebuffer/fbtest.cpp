@@ -14,7 +14,7 @@ protected:
     Timer timer;
     u64 prev_time;
     u64 frames = 0;
-    u8 color = 0;
+    float color = 0;
 
 public:
     DemoWindow(int width, int height)
@@ -56,8 +56,8 @@ public:
 
         Surface s = lock();
 
-        float c = float(color) / 255.0f;
-        color++;
+        float c = float(u8(color)) / 255.0f;
+        color += 0.08f;
         s.clear(c, c, c, 1.0f);
 
         // draw debugging rectangles
