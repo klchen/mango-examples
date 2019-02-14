@@ -26,6 +26,9 @@ public:
         case KEYCODE_F:
             toggleFullscreen();
             break;
+
+        default:
+            break;
         }
     }
 
