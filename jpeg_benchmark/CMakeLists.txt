@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 add_executable(benchmark benchmark.cpp)
 find_package(OpenCV REQUIRED)
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
+    add_definitions (-mfpu=neon -mfloat-abi=hard)
+    set(CMAKE_CXX_FLAGS "-fpermissive -Wno-psabi")
+endif ()
 target_link_libraries(benchmark LINK_PUBLIC mango jpeg ${OpenCV_LIBS})
