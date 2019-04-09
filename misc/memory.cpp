@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2019 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <vector>
 #include <mango/core/memory.hpp>
@@ -10,7 +10,7 @@ using namespace mango;
 void example1()
 {
     // allocate memory
-    std::vector<uint8> buffer(20000);
+    std::vector<u8> buffer(20000);
 
     // point to the allocated memory
     Memory memory(buffer.data(), buffer.size());
@@ -35,7 +35,7 @@ void example2()
     SharedMemory shared(1024 * 16);
 
     // A bit different use case.. take ownership of memory allocated by someone else:
-    uint8 *buffer = new uint8[40000];
+    u8* buffer = new u8[40000];
     SharedMemory shared2(buffer, 40000);
 
     // The buffer is now owned by shared2 and releasing the memory would be a programming error:

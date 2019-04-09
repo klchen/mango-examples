@@ -6,23 +6,23 @@
 
 using namespace mango;
 
-void example1(const uint8* p)
+void example1(const u8* p)
 {
     // unaligned little-endian loads
     // address must be manually computed and updated
-    uint16 a = uload16le(p + 0);
-    uint16 b = uload16le(p + 2);
-    uint32 c = uload32le(p + 4);
+    u16 a = uload16le(p + 0);
+    u16 b = uload16le(p + 2);
+    u32 c = uload32le(p + 4);
     p += 8;
 }
 
-void example2(uint8* address)
+void example2(u8* address)
 {
     // same as example1 but using "endian aware pointers"
     LittleEndianPointer p = address;
-    uint16 a = p.read16();
-    uint16 b = p.read16();
-    uint32 c = p.read32();
+    u16 a = p.read16();
+    u16 b = p.read16();
+    u32 c = p.read32();
 }
 
 void example3(LittleEndianPointer& p)
@@ -30,7 +30,7 @@ void example3(LittleEndianPointer& p)
     float f = p.read32f();
     p += 20; // skip 20 bytes
     float16 h = p.read16f();
-    uint64 a = p.read64();
+    u64 a = p.read64();
 }
 
 void example4(Stream& stream)
@@ -39,12 +39,12 @@ void example4(Stream& stream)
     LittleEndianStream s = stream;
 
     // The translator extends Stream interface to understand endianess..
-    uint32 a = s.read32();
+    u32 a = s.read32();
     float b = s.read32f();
     s.seek(20, Stream::CURRENT); // skip 20 bytes
 
     // read a block of memory
-    uint32 size = s.read32();
+    u32 size = s.read32();
     char* buffer = new char[size];
     s.read(buffer, size);
     delete[] buffer;
@@ -60,7 +60,7 @@ struct SomeHeader
     u32be c;
 };
 
-void example5(const uint8* p)
+void example5(const u8* p)
 {
     // reinterpret raw storage as SomeHeader
     const SomeHeader& header = *reinterpret_cast<const SomeHeader *>(p);
@@ -77,7 +77,7 @@ void example5(const uint8* p)
     directly without any dispatching logic.
 
     This line of code:
-    uint32 x = p.read32();
+    u32 x = p.read32();
 
     Would see that we are reading from, say, Little Endian pointer and
     that we are compiling for little endian architecture, thus no
@@ -90,8 +90,8 @@ void example5(const uint8* p)
 
     This is equal to doing this:
     char* p = ...;
-    uint32 x = *reinterpret_cast<uint32 *>(p);
-    p += sizeof(uint32);
+    u32 x = *reinterpret_cast<u32 *>(p);
+    p += sizeof(u32);
 
     The difference is that our way is less typing and always guaranteed
     to be correct and use the best available implementation.

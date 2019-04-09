@@ -1,12 +1,13 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2019 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
 
 using namespace mango;
 
-namespace {
+namespace
+{
     void computeSomethingExpensive(int)
     {
     }
@@ -26,7 +27,7 @@ namespace {
     void computeOtherStuff(int)
     {
     }
-}
+} // namespace
 
 void example1()
 {
@@ -38,7 +39,8 @@ void example1()
     for (int i = 0; i < 10; ++i)
     {
         // Create tasks for the queue
-        q.enqueue([] {
+        q.enqueue([]
+        {
             computeSomethingExpensive();
         });
     }
@@ -57,7 +59,8 @@ void example2()
 
     for (int i = 0; i < 20; ++i)
     {
-        q.enqueue([=] {
+        q.enqueue([=]
+        {
             computeSomethingExpensive(i);
         });
     }
@@ -74,7 +77,8 @@ void example3()
 
     for (int i = 0; i < 10; ++i)
     {
-        a.enqueue([i] {
+        a.enqueue([i]
+        {
             computeStuff(i);
         });
 
@@ -90,7 +94,8 @@ void example3()
         // concurrent tasks don't have any dependencies, except those which
         // are artificially created with execution barriers.
 
-        b.enqueue([i] {
+        b.enqueue([i]
+        {
             computeOtherStuff(i);
         });
     }
@@ -105,7 +110,8 @@ void example4()
     {
         ConcurrentQueue x;
 
-        q.enqueue([&] {
+        q.enqueue([&]
+        {
             // enqueueuing tasks from tasks works fine and can improve
             // throughput in some situations where single thread cannot keep
             // all of the pool's worker threads busy. This situation is more common
@@ -122,7 +128,8 @@ void example4()
             // short enough but not too short (for example, incrementing a counter
             // would obviously be a bit too trivial thing to do in a ThreadPool).
 
-            x.enqueue([&] {
+            x.enqueue([&]
+            {
                 ++counter; // Oops..
             });
         });
@@ -179,7 +186,8 @@ void example6()
         // is used to keep track of state life-time. In other words, the last
         // worker thread to complete will "turn off the lights". This way work can be
         // queued in the pool w/o having to synchronize before exiting this scope.
-        q.enqueue([state, i] {
+        q.enqueue([state, i]
+        {
             state->process(i, 64);
         });
     }
@@ -205,11 +213,13 @@ void example7()
     ConcurrentQueue q;
     for (int i = 0; i < 200; ++i)
     {
-        q.enqueue([] {
+        q.enqueue([]
+        {
             ConcurrentQueue x;
             for (int j = 0; j < 40; ++j)
             {
-                x.enqueue([] {
+                x.enqueue([]
+                {
                     computeSomethingExpensive();
                 });
             }
