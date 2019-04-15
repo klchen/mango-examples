@@ -11,6 +11,8 @@ using namespace mango::filesystem;
 // pipelined jpeg reader
 // -----------------------------------------------------------------
 
+#define USE_MMAP
+
 void test_jpeg(const std::string& folder)
 {
     ConcurrentQueue q("jpeg reader testloop");
@@ -27,10 +29,20 @@ void test_jpeg(const std::string& folder)
         if (!node.isDirectory())
         {
             std::string filename = node.name;
-            q.enqueue([&path, filename, i, count, &image_bytes] {
+            q.enqueue([&path, filename, i, count, &image_bytes]
+            {
                 printf("filename: %s (%zu / %zu) begin.\n", filename.c_str(), i + 1, count);
+
+#ifdef USE_MMAP
                 File file(path, filename);
                 Bitmap bitmap(file, filename);
+#else
+                FileStream file(path.pathname() + filename, Stream::READ);
+                Buffer buffer(file.size());
+                file.read(buffer.data(), buffer.size());
+                Bitmap bitmap(buffer, filename);
+#endif
+
                 image_bytes += bitmap.width * bitmap.height * 4;
                 printf("filename: %s (%zu / %zu) done.\n", filename.c_str(), i + 1, count);
             });
