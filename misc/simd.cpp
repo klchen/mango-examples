@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2019 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/simd/simd.hpp>
 #include <mango/math/math.hpp>
@@ -34,11 +34,11 @@ void example1()
 // previous example using higher-level "Short Vector Math" abstraction:
 void example2()
 {
-    float4 a(1.0f, 2.0f, 2.0f, 1.0f);
-    float4 b(0.0f, 1.0f, 0.5f, 0.5f);
-    float4 c = a + b;
-    float4 d = c * b;
-    float4 e = select(a > b, d, c);
+    float32x4 a(1.0f, 2.0f, 2.0f, 1.0f);
+    float32x4 b(0.0f, 1.0f, 0.5f, 0.5f);
+    float32x4 c = a + b;
+    float32x4 d = c * b;
+    float32x4 e = select(a > b, d, c);
 }
 
 int main()
