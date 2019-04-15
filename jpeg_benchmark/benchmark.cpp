@@ -7,6 +7,7 @@
 using namespace mango;
 using namespace mango::filesystem;
 
+#define TEST_STB
 #define TEST_OCV
 
 // ----------------------------------------------------------------------
@@ -188,6 +189,7 @@ int main(int argc, const char* argv[])
 
     // ------------------------------------------------------------------
 
+#ifdef TEST_STB
     printf("load stb:     ");
     time0 = timer.ms();
 
@@ -195,6 +197,7 @@ int main(int argc, const char* argv[])
 
     time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
+#endif
 
     // ------------------------------------------------------------------
 
@@ -231,6 +234,7 @@ int main(int argc, const char* argv[])
 
     // ------------------------------------------------------------------
 
+#ifdef TEST_STB
     printf("save stb:     ");
     time0 = timer.ms();
 
@@ -238,6 +242,7 @@ int main(int argc, const char* argv[])
 
     time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
+#endif
 
     // ------------------------------------------------------------------
 
