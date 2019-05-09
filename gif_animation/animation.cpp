@@ -33,7 +33,7 @@ struct AnimationGIF
 class DemoWindow : public Framebuffer
 {
 protected:
-    AnimationGIF m_animation;
+    AnimationGIF& m_animation;
 
     Timer timer;
     u64 prev_time;
@@ -41,9 +41,9 @@ protected:
     float color = 0;
 
 public:
-    DemoWindow(int width, int height)
-        : Framebuffer(width, height)
-        , m_animation("../dude.gif")
+    DemoWindow(AnimationGIF& animation)
+        : Framebuffer(animation.m_bitmap.width, animation.m_bitmap.height)
+        , m_animation(animation)
     {
         setVisible(true);
         setTitle("[DemoWindow]");
@@ -86,6 +86,7 @@ public:
 
 int main(int argc, const char* argv[])
 {
-    DemoWindow demo(800, 600);
+    AnimationGIF animation("../dude.gif");
+    DemoWindow demo(animation);
     demo.enterEventLoop();
 }
