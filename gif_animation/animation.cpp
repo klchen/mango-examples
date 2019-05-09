@@ -34,11 +34,8 @@ class DemoWindow : public Framebuffer
 {
 protected:
     AnimationGIF& m_animation;
-
     Timer timer;
     u64 prev_time;
-    u64 frames = 0;
-    float color = 0;
 
 public:
     DemoWindow(AnimationGIF& animation)
