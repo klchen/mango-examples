@@ -31,14 +31,14 @@ void example2()
     File file("test.jpg");
 
     // This is redundant but let's read the file into a buffer
-    uint64 size = file.size();
+    u64 size = file.size();
     std::vector<char> buffer(size);
     std::memcpy(buffer.data(), file.data(), size);
 
     // On the other hand, it is also a block of memory.. so endianess
     // aware pointer will also be a possible use case:
     LittleEndianPointer p = Memory(file).address;
-    uint32 value2 = p.read32();
+    u32 value2 = p.read32();
     p += 8; // skip 8 bytes
     float value3 = p.read32f();
 }

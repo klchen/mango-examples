@@ -11,7 +11,7 @@ using namespace mango::filesystem;
 // pipelined jpeg reader
 // -----------------------------------------------------------------
 
-#define USE_MMAP
+//#define USE_MMAP
 
 void test_jpeg(const std::string& folder)
 {

@@ -36,7 +36,7 @@ void example2(const Memory& memory, const std::string& filename)
     does the processing using a Memory block so these all examples are in fact
     convenience methods for the same mechanism doing the work under the hood.
 */
-void example3(uint8* data, size_t size)
+void example3(u8* data, size_t size)
 {
     Memory memory(data, size);
     Bitmap bitmap(memory, "jpg"); // we know it's a jpeg file
@@ -89,7 +89,7 @@ void example5(const Memory& memory, const std::string& extension)
 
         // Since this is a simple example we just allocate a buffer.
         const int stride = header.width * header.format.bytes();
-        std::vector<uint8> buffer(header.height * stride);
+        std::vector<u8> buffer(header.height * stride);
 
         // This is just "Image Pointer" ; mango::Surface is just surface
         // description so that the decoder / blitter knows how to interpret the

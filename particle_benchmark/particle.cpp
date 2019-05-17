@@ -9,13 +9,14 @@
 using namespace mango;
 
 template <typename T>
-using AlignedVector = std::vector<T, AlignedAllocator<T>>;
+using AlignedVector = std::vector<T, AlignedAllocator<T, 16>>;
 
 // ----------------------------------------------------------------------
 // helpers
 // ----------------------------------------------------------------------
 
-namespace {
+namespace
+{
 
     std::random_device rd;
     std::mt19937 mt(rd());
@@ -47,7 +48,7 @@ namespace method1
     {
         float4 position; // this is the only mutable data in the transform() method
         float4 velocity;
-        uint32 color;
+        u32 color;
         float radius;
         float rotation;
     };
@@ -92,7 +93,7 @@ namespace method2
     {
         AlignedVector<float4> positions;
         AlignedVector<float4> velocities;
-        std::vector<uint32> colors;
+        std::vector<u32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
 
@@ -146,7 +147,7 @@ namespace method3
         AlignedVector<float4> xvelocities;
         AlignedVector<float4> yvelocities;
         AlignedVector<float4> zvelocities;
-        std::vector<uint32> colors;
+        std::vector<u32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
 
@@ -216,7 +217,7 @@ namespace method4
     {
         AlignedVector<PackedVector> positions;
         AlignedVector<PackedVector> velocities;
-        std::vector<uint32> colors;
+        std::vector<u32> colors;
         std::vector<float> radiuses;
         std::vector<float> rotations;
 
@@ -296,29 +297,29 @@ int main(int argc, const char* argv[])
     method3::Scene scene3(count);
     method4::Scene scene4(count);
 
-    uint64 time1 = 0;
-    uint64 time2 = 0;
-    uint64 time3 = 0;
-    uint64 time4 = 0;
+    u64 time1 = 0;
+    u64 time2 = 0;
+    u64 time3 = 0;
+    u64 time4 = 0;
 
     Timer timer;
 
     const int frames = 60;
     for (int i = 0; i < frames; ++i)
     {
-        uint64 s0 = timer.ms();
+        u64 s0 = timer.ms();
         scene1.transform();
 
-        uint64 s1 = timer.ms();
+        u64 s1 = timer.ms();
         scene2.transform();
 
-        uint64 s2 = timer.ms();
+        u64 s2 = timer.ms();
         scene3.transform();
 
-        uint64 s3 = timer.ms();
+        u64 s3 = timer.ms();
         scene4.transform();
 
-        uint64 s4 = timer.ms();
+        u64 s4 = timer.ms();
 
         time1 += (s1 - s0);
         time2 += (s2 - s1);

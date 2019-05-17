@@ -7,8 +7,8 @@
 using namespace mango;
 using namespace mango::filesystem;
 
-#define TEST_STB
-#define TEST_OCV
+//#define TEST_STB
+//#define TEST_OCV
 
 // ----------------------------------------------------------------------
 // warmup()
@@ -66,8 +66,12 @@ Surface load_jpeg(const char* filename)
 
     fclose( file );
 
+    Format format = FORMAT_R8G8B8;
+    if (numChannels == 4)
+        format = FORMAT_R8G8B8A8;
+
     // TODO: free data, format depends on numChannels
-    return Surface(w, h, FORMAT_R8G8B8, w * numChannels, data);
+    return Surface(w, h, format, w * numChannels, data);
 }
 
 void save_jpeg(const char* filename, const Surface& surface)
@@ -88,8 +92,8 @@ void save_jpeg(const char* filename, const Surface& surface)
 
     cinfo.image_width = surface.width;
     cinfo.image_height = surface.height;
-    cinfo.input_components = 3;
-    cinfo.in_color_space = JCS_RGB;
+    cinfo.input_components = surface.format.bytes();
+    cinfo.in_color_space = surface.format.bytes() == 3 ? JCS_RGB : JCS_EXT_RGBA;
 
     int quality = 95;
 
@@ -174,8 +178,8 @@ int main(int argc, const char* argv[])
     warmup(argv[1]);
 
     Timer timer;
-    uint64 time0;
-    uint64 time1;
+    u64 time0;
+    u64 time1;
 
     // ------------------------------------------------------------------
 
