@@ -259,8 +259,8 @@ int main(int argc, const char* argv[])
     warmup(filename);
 
     Timer timer;
-    uint64 time0;
-    uint64 time1;
+    u64 time0;
+    u64 time1;
 
     // ------------------------------------------------------------------
 
