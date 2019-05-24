@@ -7,6 +7,8 @@
 using namespace mango;
 using namespace mango::filesystem;
 
+//#define ENABLE_SPNG
+
 // ----------------------------------------------------------------------
 // warmup()
 // ----------------------------------------------------------------------
@@ -110,7 +112,7 @@ void lode_decodeOneStep(const char* filename)
 
 // https://libspng.org/
 
-#if 0
+#if defined(ENABLE_SPNG)
 
 #include <spng.h>
 
@@ -226,7 +228,7 @@ Surface load_spng(const char* filename)
     return s;
 }
 
-#endif
+#endif // ENABLE_SPNG
 
 // ----------------------------------------------------------------------
 // stb
@@ -258,58 +260,57 @@ int main(int argc, const char* argv[])
     const char* filename = argv[1];
     warmup(filename);
 
-    Timer timer;
     u64 time0;
     u64 time1;
 
     // ------------------------------------------------------------------
 
     printf("load libpng:  ");
-    time0 = timer.us();
+    time0 = Time::us();
 
     libpng_load(filename);
 
-    time1 = timer.us();
+    time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
     printf("load lodepng: ");
-    time0 = timer.us();
+    time0 = Time::us();
 
     lode_decodeOneStep(filename);
 
-    time1 = timer.us();
+    time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
-#if 0
+#if defined(ENABLE_SPNG)
     printf("load spng:    ");
-    time0 = timer.us();
+    time0 = Time::us();
 
     Surface s = load_spng(filename);
 
-    time1 = timer.us();
+    time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
 #endif
     // ------------------------------------------------------------------
 
     printf("load stb:     ");
-    time0 = timer.us();
+    time0 = Time::us();
 
     Surface s_stb = stb_load_png(filename);
 
-    time1 = timer.us();
+    time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
 
     printf("load mango:   ");
-    time0 = timer.us();
+    time0 = Time::us();
 
     Bitmap bitmap(filename);
 
-    time1 = timer.us();
+    time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
 
     // ------------------------------------------------------------------
