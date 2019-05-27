@@ -308,7 +308,25 @@ int main(int argc, const char* argv[])
     printf("load mango:   ");
     time0 = Time::us();
 
+#if 0
     Bitmap bitmap(filename);
+#else
+    FileStream file(filename, Stream::READ);
+    Buffer buffer(file.size());
+    file.read(buffer.data(), file.size());
+
+    ImageDecoder decoder(buffer, filename);
+    ImageHeader header = decoder.header();
+
+    Bitmap bitmap(header.width, header.height, header.format);
+    //Bitmap bitmap(header.width, header.height, IndexedFormat(8));
+    //Palette palette;
+
+    ImageDecodeOptions options;
+    //options.palette = &palette;
+
+    decoder.decode(bitmap, options);
+#endif
 
     time1 = Time::us();
     printf("%5d ms\n", int((time1 - time0)/1000));
@@ -318,6 +336,6 @@ int main(int argc, const char* argv[])
     printf("\n");
     printf("image: %d x %d\n", bitmap.width, bitmap.height);
 
-    //bitmap.save("debug.png");
+    //bitmap.save("/test/debug.png");
     //s_stb.save("debug.jpg");
 }
