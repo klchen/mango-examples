@@ -271,7 +271,7 @@ int main(int argc, const char* argv[])
     libpng_load(filename);
 
     time1 = Time::us();
-    printf("%5d ms\n", int((time1 - time0)/1000));
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
 
     // ------------------------------------------------------------------
 
@@ -281,7 +281,7 @@ int main(int argc, const char* argv[])
     lode_decodeOneStep(filename);
 
     time1 = Time::us();
-    printf("%5d ms\n", int((time1 - time0)/1000));
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
 
     // ------------------------------------------------------------------
 #if defined(ENABLE_SPNG)
@@ -291,7 +291,7 @@ int main(int argc, const char* argv[])
     Surface s = load_spng(filename);
 
     time1 = Time::us();
-    printf("%5d ms\n", int((time1 - time0)/1000));
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
 #endif
     // ------------------------------------------------------------------
 
@@ -301,7 +301,7 @@ int main(int argc, const char* argv[])
     Surface s_stb = stb_load_png(filename);
 
     time1 = Time::us();
-    printf("%5d ms\n", int((time1 - time0)/1000));
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
 
     // ------------------------------------------------------------------
 
@@ -329,7 +329,7 @@ int main(int argc, const char* argv[])
 #endif
 
     time1 = Time::us();
-    printf("%5d ms\n", int((time1 - time0)/1000));
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
 
     // ------------------------------------------------------------------
 
