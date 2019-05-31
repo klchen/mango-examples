@@ -151,7 +151,7 @@ void example5(const Memory& memory, const std::string& extension)
         // can page out the data as the physical memory is needed somewhere else.
 
         // TL;DR - decode the image
-        decoder.decode(surface, 0, 0, 0, 0);
+        decoder.decode(surface);
     }
 }
 
