@@ -11,11 +11,11 @@ class TestWindow : public opengl::Context
 {
 public:
     TestWindow()
-    : Context(600, 400)
+        : Context(600, 400)
     {
     }
 
-    void onKeyPress(Keycode code, uint32 mask) override
+    void onKeyPress(Keycode code, u32 mask) override
     {
         switch (code)
         {

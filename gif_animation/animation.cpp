@@ -26,7 +26,7 @@ struct AnimationGIF
 
     void decode()
     {
-        m_decoder.decode(m_bitmap, nullptr, 0, 0, 0);
+        m_decoder.decode(m_bitmap);
     }
 };
 
