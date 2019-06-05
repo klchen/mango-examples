@@ -83,7 +83,7 @@ public:
 
 int main(int argc, const char* argv[])
 {
-    AnimationGIF animation("../dude.gif");
+    AnimationGIF animation("dude.gif");
     DemoWindow demo(animation);
     demo.enterEventLoop();
 }
