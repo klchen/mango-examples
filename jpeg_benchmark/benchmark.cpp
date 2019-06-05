@@ -93,7 +93,8 @@ void save_jpeg(const char* filename, const Surface& surface)
     cinfo.image_width = surface.width;
     cinfo.image_height = surface.height;
     cinfo.input_components = surface.format.bytes();
-    cinfo.in_color_space = surface.format.bytes() == 3 ? JCS_RGB : JCS_EXT_RGBA;
+    //cinfo.in_color_space = surface.format.bytes() == 3 ? JCS_RGB : JCS_EXT_RGBA;
+    cinfo.in_color_space = JCS_RGB;
 
     int quality = 95;
 
