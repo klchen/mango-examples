@@ -254,7 +254,9 @@ int main(int argc, const char* argv[])
     printf("save mango:   ");
     time0 = timer.ms();
 
-    bitmap.save("output-mango.jpg");
+    ImageEncodeOptions options;
+    options.quality = 0.70f;
+    bitmap.save("output-mango.jpg", options);
 
     time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
