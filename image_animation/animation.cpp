@@ -9,16 +9,16 @@ using namespace mango;
 using namespace mango::filesystem;
 using namespace mango::framebuffer;
 
-struct AnimationGIF
+struct ImageAnimation
 {
     File m_file;
     ImageDecoder m_decoder;
     ImageHeader m_header;
     Bitmap m_bitmap;
 
-    AnimationGIF(const std::string& filename)
+    ImageAnimation(const std::string& filename)
         : m_file(filename)
-        , m_decoder(m_file, ".gif")
+        , m_decoder(m_file, filename)
         , m_header(m_decoder.header())
         , m_bitmap(m_header.width, m_header.height, m_header.format)
     {
@@ -33,12 +33,12 @@ struct AnimationGIF
 class DemoWindow : public Framebuffer
 {
 protected:
-    AnimationGIF& m_animation;
+    ImageAnimation& m_animation;
     Timer timer;
     u64 prev_time;
 
 public:
-    DemoWindow(AnimationGIF& animation)
+    DemoWindow(ImageAnimation& animation)
         : Framebuffer(animation.m_bitmap.width, animation.m_bitmap.height)
         , m_animation(animation)
     {
@@ -83,7 +83,13 @@ public:
 
 int main(int argc, const char* argv[])
 {
-    AnimationGIF animation("dude.gif");
+    std::string filename = "images/dude.gif";
+    if (argc > 1)
+    {
+        filename = argv[1];
+    }
+
+    ImageAnimation animation(filename);
     DemoWindow demo(animation);
     demo.enterEventLoop();
 }
