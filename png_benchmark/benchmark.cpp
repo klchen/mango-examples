@@ -346,9 +346,4 @@ int main(int argc, const char* argv[])
 
     // ------------------------------------------------------------------
 
-    //printf("\n");
-    //printf("image: %d x %d\n", bitmap.width, bitmap.height);
-
-    //bitmap.save("/test/debug.png");
-    //s_stb.save("debug.jpg");
 }
