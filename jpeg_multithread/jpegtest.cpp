@@ -13,6 +13,11 @@ using namespace mango::filesystem;
 
 //#define USE_MMAP
 
+static inline bool isJPEG(const FileInfo& node)
+{
+    return !node.isDirectory() && filesystem::getExtension(node.name) == ".jpg";
+}
+
 void test_jpeg(const std::string& folder)
 {
     ConcurrentQueue q("jpeg reader testloop");
@@ -26,7 +31,7 @@ void test_jpeg(const std::string& folder)
     for (size_t i = 0; i < count; ++i)
     {
         const auto& node = path[i];
-        if (!node.isDirectory())
+        if (isJPEG(node))
         {
             std::string filename = node.name;
             q.enqueue([&path, filename, i, count, &image_bytes]
