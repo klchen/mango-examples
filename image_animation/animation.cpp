@@ -26,7 +26,8 @@ struct ImageAnimation
 
     void decode()
     {
-        m_decoder.decode(m_bitmap);
+        ImageDecodeStatus status = m_decoder.decode(m_bitmap);
+        printf("current: %d, next: %d \n", status.current_frame_index, status.next_frame_index);
     }
 };
 
