@@ -15,6 +15,7 @@ struct ImageAnimation
     ImageDecoder m_decoder;
     ImageHeader m_header;
     Bitmap m_bitmap;
+    u64 m_delay = 20;
 
     ImageAnimation(const std::string& filename)
         : m_file(filename)
@@ -27,7 +28,9 @@ struct ImageAnimation
     void decode()
     {
         ImageDecodeStatus status = m_decoder.decode(m_bitmap);
-        printf("current: %d, next: %d \n", status.current_frame_index, status.next_frame_index);
+        m_delay = (1000 * status.frame_delay_numerator) / status.frame_delay_denominator;
+        printf("current: %d, next: %d (%d ms)\n", 
+            status.current_frame_index, status.next_frame_index, int(m_delay));
     }
 };
 
@@ -67,7 +70,7 @@ public:
     {
         u64 time = timer.ms();
         u64 diff = time - prev_time;
-        if (diff > 60)
+        if (diff > m_animation.m_delay)
         {
             prev_time = time;
 
