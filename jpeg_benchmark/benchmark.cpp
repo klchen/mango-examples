@@ -17,7 +17,7 @@ using namespace mango::filesystem;
 void warmup(const char* filename)
 {
     File file(filename);
-    Memory memory = file;
+    ConstMemory memory = file;
     std::vector<char> buffer(memory.size);
     std::memcpy(buffer.data(), memory.address, memory.size);
 }

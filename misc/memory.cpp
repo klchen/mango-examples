@@ -56,7 +56,7 @@ void example3(VirtualMemory *vm)
     // stored file is at; this is zero-cost abstraction! 
 
     // Thus, the VirtualMemory again has the same Memory interface the other memory types:
-    Memory memory = *vm;
+    ConstMemory memory = *vm;
 
     // So any code that knows how to read from Memory, knows how to read from both SharedMemory
     // and VirtualMemory. These interfaces might at initial glance look superficial but they

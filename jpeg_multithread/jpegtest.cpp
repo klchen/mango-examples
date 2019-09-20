@@ -45,7 +45,7 @@ void test_jpeg(const std::string& folder)
                 FileStream file(path.pathname() + filename, Stream::READ);
                 Buffer buffer(file.size());
                 file.read(buffer.data(), buffer.size());
-                Bitmap bitmap(buffer, filename);
+                Bitmap bitmap(Memory(buffer), filename);
 #endif
 
                 image_bytes += bitmap.width * bitmap.height * 4;

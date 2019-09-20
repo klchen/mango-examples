@@ -37,7 +37,7 @@ void example2()
 
     // On the other hand, it is also a block of memory.. so endianess
     // aware pointer will also be a possible use case:
-    LittleEndianPointer p = Memory(file).address;
+    LittleEndianConstPointer p = file.data();
     u32 value2 = p.read32();
     p += 8; // skip 8 bytes
     float value3 = p.read32f();
@@ -137,7 +137,7 @@ void example7()
     Bitmap bitmap2(file, file.filename());
 
     // Let's open up the above bitmap creation a little bit..
-    Memory memory = file; // memory map view of the file
+    ConstMemory memory = file; // memory map view of the file
     std::string filename = file.filename();
     // Decode the image from memory map view of the file
     // The second argument is actually extension of the filename but
