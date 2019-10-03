@@ -9,6 +9,7 @@ using namespace mango::filesystem;
 
 //#define TEST_STB
 //#define TEST_OCV
+//#define TEST_JPEG_COMPRESSOR
 
 // ----------------------------------------------------------------------
 // warmup()
@@ -17,7 +18,8 @@ using namespace mango::filesystem;
 void warmup(const char* filename)
 {
     File file(filename);
-    ConstMemory memory = file;
+    //Const
+    Memory memory = file;
     std::vector<char> buffer(memory.size);
     std::memcpy(buffer.data(), memory.address, memory.size);
 }
@@ -165,6 +167,25 @@ Surface ocv_load_jpeg(const char* filename)
 #endif
 
 // ----------------------------------------------------------------------
+// jpeg-compressor
+// ----------------------------------------------------------------------
+
+#ifdef TEST_JPEG_COMPRESSOR
+
+#include "jpeg-compressor/jpgd.h"
+
+Surface jpgd_load(const char* filename)
+{
+    int width;
+    int height;
+    int comps;
+    u8* image = jpgd::decompress_jpeg_image_from_file(filename, &width, &height, &comps, 4);
+    return Surface(width, height, FORMAT_B8G8R8A8, width * 4, image);
+}
+
+#endif
+
+// ----------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------
 
@@ -221,6 +242,19 @@ int main(int argc, const char* argv[])
     time0 = timer.ms();
 
     Surface s_ocv = ocv_load_jpeg(argv[1]);
+
+    time1 = timer.ms();
+    printf("%d ms\n", int(time1 - time0));
+#endif
+
+    // ------------------------------------------------------------------
+
+#ifdef TEST_JPEG_COMPRESSOR
+
+    printf("load jpgd:    ");
+    time0 = timer.ms();
+
+    Surface s_jpgd = jpgd_load(argv[1]);
 
     time1 = timer.ms();
     printf("%d ms\n", int(time1 - time0));
