@@ -1,4 +1,4 @@
-link_libraries(mango)
+link_libraries(mango dl)
 
 add_executable(concurrency concurrency.cpp)
 add_executable(filesystem filesystem.cpp)
