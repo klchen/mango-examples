@@ -74,6 +74,63 @@ void load_libpng(Memory memory)
     free(image);
 }
 
+void save_libpng(const Bitmap& bitmap)
+{
+
+    const char* filename = "output-libpng.png";
+
+    int width = bitmap.width;
+    int height = bitmap.height;
+
+    std::vector<u8*> row_pointer_array(height);
+    for (int y = 0; y < height; ++y)
+    {
+        row_pointer_array[y] = bitmap.address(0, y);
+    }
+
+    u8** row_pointers = row_pointer_array.data();
+
+    FILE *fp = fopen(filename, "wb");
+    if(!fp)
+        abort();
+
+    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png)
+        abort();
+
+    png_infop info = png_create_info_struct(png);
+    if (!info) abort();
+
+    if (setjmp(png_jmpbuf(png)))
+        abort();
+
+    png_init_io(png, fp);
+
+    // Output is 8bit depth, RGBA format.
+    png_set_IHDR(
+        png,
+        info,
+        width, height,
+        8,
+        PNG_COLOR_TYPE_RGBA,
+        PNG_INTERLACE_NONE,
+        PNG_COMPRESSION_TYPE_DEFAULT,
+        PNG_FILTER_TYPE_DEFAULT
+    );
+    png_write_info(png, info);
+
+    // To remove the alpha channel for PNG_COLOR_TYPE_RGB format,
+    // Use png_set_filler().
+    //png_set_filler(png, 0, PNG_FILLER_AFTER);
+
+    png_write_image(png, row_pointers);
+    png_write_end(png, NULL);
+
+    fclose(fp);
+
+    png_destroy_write_struct(&png, &info);
+}
+
 #endif
 
 // ----------------------------------------------------------------------
@@ -90,6 +147,11 @@ void load_lodepng(Memory memory)
     u8* image;
     int error = lodepng_decode32(&image, &width, &height, memory.address, memory.size);
     free(image);
+}
+
+void save_lodepng(const Bitmap& bitmap)
+{
+    lodepng_encode32_file("output-lodepng.png", bitmap.image, bitmap.width, bitmap.height);
 }
 
 #endif
@@ -215,6 +277,11 @@ void load_spng(Memory memory)
     free(image);
 }
 
+void save_spng(const Bitmap& bitmap)
+{
+    // TODO: not supported yet in libspng v0.5.0
+}
+
 #endif
 
 // ----------------------------------------------------------------------
@@ -226,11 +293,19 @@ void load_spng(Memory memory)
 #define STB_IMAGE_IMPLEMENTATION
 #include "../jpeg_benchmark/stb_image.h"
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "../jpeg_benchmark/stb_image_write.h"
+
 void load_stb(Memory memory)
 {
     int width, height, bpp;
     u8* image = stbi_load_from_memory(memory.address, memory.size, &width, &height, &bpp, 4);
     free(image);
+}
+
+void save_stb(const Bitmap& bitmap)
+{
+    stbi_write_png("output-stb.png", bitmap.width, bitmap.height, 4, bitmap.image, bitmap.width * 4);
 }
 
 #endif
@@ -252,6 +327,11 @@ void load_mango(Memory memory)
     decoder.decode(bitmap, options);
 }
 
+void save_mango(const Bitmap& bitmap)
+{
+    bitmap.save("output-mango.png");
+}
+
 #endif
 
 // ----------------------------------------------------------------------
@@ -267,6 +347,11 @@ int main(int argc, const char* argv[])
     }
 
     const char* filename = argv[1];
+
+    Bitmap bgra(filename, Format(32, Format::UNORM, Format::BGRA, 8, 8, 8, 8));
+    Bitmap rgba(bgra.width, bgra.height, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
+    rgba.blit(0, 0, bgra);
+    printf("image: %s (%d x %d)\n\n", filename, bgra.width, bgra.height);
 
     File file(filename);
     Buffer buffer(file);
@@ -345,5 +430,77 @@ int main(int argc, const char* argv[])
 #endif
 
     // ------------------------------------------------------------------
+
+    printf("\n");
+
+    // ------------------------------------------------------------------
+
+#if defined ENABLE_LIBPNG
+
+    printf("save libpng:  ");
+    time0 = Time::us();
+
+    save_libpng(rgba);
+
+    time1 = Time::us();
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
+
+#endif
+
+    // ------------------------------------------------------------------
+
+#if defined ENABLE_LODEPNG
+
+    printf("save lodepng: ");
+    time0 = Time::us();
+
+    save_lodepng(rgba);
+
+    time1 = Time::us();
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
+
+#endif
+
+    // ------------------------------------------------------------------
+
+#if defined(ENABLE_SPNG)
+
+    printf("save spng:    ");
+    time0 = Time::us();
+
+    save_spng(rgba);
+
+    time1 = Time::us();
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
+
+#endif
+
+    // ------------------------------------------------------------------
+
+#if defined(ENABLE_STB)
+
+    printf("save stb:     ");
+    time0 = Time::us();
+
+    save_stb(rgba);
+
+    time1 = Time::us();
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
+
+#endif
+
+    // ------------------------------------------------------------------
+
+#if defined(ENABLE_MANGO)
+
+    printf("save mango:   ");
+    time0 = Time::us();
+
+    save_mango(bgra);
+
+    time1 = Time::us();
+    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
+
+#endif
 
 }
