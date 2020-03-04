@@ -367,16 +367,11 @@ int main(int argc, const char* argv[])
     const char* filename = argv[1];
 
     Bitmap bgra(filename, Format(32, Format::UNORM, Format::BGRA, 8, 8, 8, 8));
-    Bitmap rgba(bgra.width, bgra.height, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
-    rgba.blit(0, 0, bgra);
+    Bitmap rgba(bgra, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
     printf("image: %s (%d x %d)\n\n", filename, bgra.width, bgra.height);
 
     File file(filename);
     Buffer buffer(file);
-
-    u64 time0;
-    u64 time1;
-    u64 time2;
 
     printf("----------------------------------------------\n");
     printf("                load         save             \n");
