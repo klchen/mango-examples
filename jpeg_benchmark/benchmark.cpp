@@ -1,6 +1,6 @@
 /*
     MANGO Multimedia Development Platform
-    Copyright (C) 2012-2018 Twilight Finland 3D Oy Ltd. All rights reserved.
+    Copyright (C) 2012-2020 Twilight Finland 3D Oy Ltd. All rights reserved.
 */
 #include <mango/mango.hpp>
 
@@ -21,6 +21,10 @@ void warmup(const char* filename)
     ConstMemory memory = file;
     std::vector<char> buffer(memory.size);
     std::memcpy(buffer.data(), memory.address, memory.size);
+
+    ImageDecoder decoder(memory, filename);
+    ImageHeader header = decoder.header();
+    printf("image: %d x %d (%d KB)\n", header.width, header.height, int(memory.size / 1024));
 }
 
 // ----------------------------------------------------------------------
@@ -185,6 +189,18 @@ Surface jpgd_load(const char* filename)
 #endif
 
 // ----------------------------------------------------------------------
+// print
+// ----------------------------------------------------------------------
+
+void print(const char* name, u64 time0, u64 time1, u64 time2)
+{
+    printf("%s", name);
+    printf("%7d.%d ms ", int((time1 - time0) / 1000), int((time1 - time0) % 10));
+    printf("%7d.%d ms ", int((time2 - time1) / 1000), int((time2 - time1) % 10));
+    printf("\n");
+}
+
+// ----------------------------------------------------------------------
 // main()
 // ----------------------------------------------------------------------
 
@@ -198,118 +214,96 @@ int main(int argc, const char* argv[])
 
     warmup(argv[1]);
 
-    Timer timer;
+    printf("----------------------------------------------\n");
+    printf("                load         save             \n");
+    printf("----------------------------------------------\n");
+
     u64 time0;
     u64 time1;
+    u64 time2;
 
     // ------------------------------------------------------------------
 
-    printf("load libjpeg: ");
-    time0 = timer.ms();
+    time0 = Time::us();
 
     Surface s = load_jpeg(argv[1]);
 
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
+    time1 = Time::us();
 
-    // ------------------------------------------------------------------
+    save_jpeg("output-libjpeg.jpg", s);
 
-#ifdef TEST_STB
-    printf("load stb:     ");
-    time0 = timer.ms();
-
-    Surface s_stb = stb_load_jpeg(argv[1]);
-
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
-#endif
-
-    // ------------------------------------------------------------------
-
-    printf("load mango:   ");
-    time0 = timer.ms();
-
-    Bitmap bitmap(argv[1]);
-
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
+    time2 = Time::us();
+    print("libjpeg: ", time0, time1, time2);
 
     // ------------------------------------------------------------------
 
 #ifdef TEST_OCV
-    printf("load opencv:  ");
-    time0 = timer.ms();
+
+    // this is not timed; the ocv_image is for saving
+    cv::Mat ocv_image = cv::imread(argv[1], CV_LOAD_IMAGE_COLOR);
+
+    time0 = Time::us();
 
     Surface s_ocv = ocv_load_jpeg(argv[1]);
 
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
+    time1 = Time::us();
+
+    cv::imwrite("output-ocv.jpg", ocv_image);
+
+    time2 = Time::us();
+    print("opencv:  ", time0, time1, time2);
+
+#endif
+
+    // ------------------------------------------------------------------
+
+#ifdef TEST_STB
+
+    time0 = Time::us();
+
+    Surface s_stb = stb_load_jpeg(argv[1]);
+
+    time1 = Time::us();
+
+    stb_save_jpeg("output-stb.jpg", s_stb);
+
+    time2 = Time::us();
+    print("stb:     ", time0, time1, time2);
+
 #endif
 
     // ------------------------------------------------------------------
 
 #ifdef TEST_JPEG_COMPRESSOR
 
-    printf("load jpgd:    ");
-    time0 = timer.ms();
+    time0 = Time::us();
 
     Surface s_jpgd = jpgd_load(argv[1]);
 
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
+    time1 = Time::us();
+
+    // NOTE: does not support encoding
+
+    time2 = Time::us();
+    print("jpgd:    ", time0, time1, time2);
+
 #endif
 
     // ------------------------------------------------------------------
 
-    printf("\n");
-    printf("save libjpeg: ");
-    time0 = timer.ms();
+    time0 = Time::us();
 
-    save_jpeg("output-libjpeg.jpg", s);
+    Bitmap bitmap(argv[1]);
 
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
-
-    // ------------------------------------------------------------------
-
-#ifdef TEST_STB
-    printf("save stb:     ");
-    time0 = timer.ms();
-
-    stb_save_jpeg("output-stb.jpg", s_stb);
-
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
-#endif
-
-    // ------------------------------------------------------------------
-
-    printf("save mango:   ");
-    time0 = timer.ms();
+    time1 = Time::us();
 
     ImageEncodeOptions options;
     options.quality = 0.70f;
     bitmap.save("output-mango.jpg", options);
 
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
+    time2 = Time::us();
+    print("mango:   ", time0, time1, time2);
 
     // ------------------------------------------------------------------
 
-#ifdef TEST_OCV
-    printf("save opencv:  ");
-
-    cv::Mat ocv_image = cv::imread(argv[1], CV_LOAD_IMAGE_COLOR); // loading is not timed
-    time0 = timer.ms();
-
-    cv::imwrite("output-ocv.jpg", ocv_image);
-
-    time1 = timer.ms();
-    printf("%d ms\n", int(time1 - time0));
-#endif
-
-    // ------------------------------------------------------------------
-
-    printf("\n");
-    printf("image: %d x %d\n", bitmap.width, bitmap.height);
 }
