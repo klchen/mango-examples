@@ -338,6 +338,24 @@ void save_mango(const Bitmap& bitmap)
 // main()
 // ----------------------------------------------------------------------
 
+template <typename Load, typename Save>
+void test(const char* name, Load load, Save save, Memory memory, const Bitmap& bitmap)
+{
+    printf("%s", name);
+    u64 time0 = Time::us();
+
+    load(memory);
+
+    u64 time1 = Time::us();
+
+    save(bitmap);
+
+    u64 time2 = Time::us();
+    printf("%7d.%d ms ", int((time1 - time0) / 1000), int((time1 - time0) % 1000));
+    printf("%7d.%d ms ", int((time2 - time1) / 1000), int((time2 - time1) % 1000));
+    printf("\n");
+}
+
 int main(int argc, const char* argv[])
 {
     if (argc < 2)
@@ -358,149 +376,30 @@ int main(int argc, const char* argv[])
 
     u64 time0;
     u64 time1;
+    u64 time2;
 
-    // ------------------------------------------------------------------
-
-#if defined ENABLE_LIBPNG
-
-    printf("load libpng:  ");
-    time0 = Time::us();
-
-    load_libpng(buffer);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
-#endif
-
-    // ------------------------------------------------------------------
-
-#if defined ENABLE_LODEPNG
-
-    printf("load lodepng: ");
-    time0 = Time::us();
-
-    load_lodepng(buffer);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
-#endif
-
-    // ------------------------------------------------------------------
-
-#if defined(ENABLE_SPNG)
-
-    printf("load spng:    ");
-    time0 = Time::us();
-
-    load_spng(buffer);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
-#endif
-
-    // ------------------------------------------------------------------
-
-#if defined(ENABLE_STB)
-
-    printf("load stb:     ");
-    time0 = Time::us();
-
-    load_stb(buffer);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
-#endif
-
-    // ------------------------------------------------------------------
-
-#if defined(ENABLE_MANGO)
-
-    printf("load mango:   ");
-    time0 = Time::us();
-
-    load_mango(buffer);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
-#endif
-
-    // ------------------------------------------------------------------
-
-    printf("\n");
-
-    // ------------------------------------------------------------------
+    printf("------------------------------------------------\n");
+    printf("                load           save             \n");
+    printf("------------------------------------------------\n");
 
 #if defined ENABLE_LIBPNG
-
-    printf("save libpng:  ");
-    time0 = Time::us();
-
-    save_libpng(rgba);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
+    test("libpng:  ", load_libpng, save_libpng, buffer, rgba);
 #endif
-
-    // ------------------------------------------------------------------
 
 #if defined ENABLE_LODEPNG
-
-    printf("save lodepng: ");
-    time0 = Time::us();
-
-    save_lodepng(rgba);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
+    test("lodepng: ", load_lodepng, save_lodepng, buffer, rgba);
 #endif
-
-    // ------------------------------------------------------------------
 
 #if defined(ENABLE_SPNG)
-
-    printf("save spng:    ");
-    time0 = Time::us();
-
-    save_spng(rgba);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
+    test("spng:    ", load_spng, save_spng, buffer, rgba);
 #endif
-
-    // ------------------------------------------------------------------
 
 #if defined(ENABLE_STB)
-
-    printf("save stb:     ");
-    time0 = Time::us();
-
-    save_stb(rgba);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
+    test("stb:     ", load_stb, save_stb, buffer, rgba);
 #endif
 
-    // ------------------------------------------------------------------
-
 #if defined(ENABLE_MANGO)
-
-    printf("save mango:   ");
-    time0 = Time::us();
-
-    save_mango(bgra);
-
-    time1 = Time::us();
-    printf("%5d.%d ms\n", int((time1 - time0)/1000), int((time1 - time0)%1000));
-
+    test("mango:   ", load_mango, save_mango, buffer, bgra);
 #endif
 
 }
