@@ -351,8 +351,8 @@ void test(const char* name, Load load, Save save, Memory memory, const Bitmap& b
     save(bitmap);
 
     u64 time2 = Time::us();
-    printf("%7d.%d ms ", int((time1 - time0) / 1000), int((time1 - time0) % 1000));
-    printf("%7d.%d ms ", int((time2 - time1) / 1000), int((time2 - time1) % 1000));
+    printf("%7d.%d ms ", int((time1 - time0) / 1000), int((time1 - time0) % 10));
+    printf("%7d.%d ms ", int((time2 - time1) / 1000), int((time2 - time1) % 10));
     printf("\n");
 }
 
@@ -378,9 +378,9 @@ int main(int argc, const char* argv[])
     u64 time1;
     u64 time2;
 
-    printf("------------------------------------------------\n");
-    printf("                load           save             \n");
-    printf("------------------------------------------------\n");
+    printf("----------------------------------------------\n");
+    printf("                load         save             \n");
+    printf("----------------------------------------------\n");
 
 #if defined ENABLE_LIBPNG
     test("libpng:  ", load_libpng, save_libpng, buffer, rgba);
