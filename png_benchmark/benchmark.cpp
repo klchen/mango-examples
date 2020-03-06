@@ -329,7 +329,9 @@ void load_mango(Memory memory)
 
 void save_mango(const Bitmap& bitmap)
 {
-    bitmap.save("output-mango.png");
+    ImageEncodeOptions options;
+    options.compression = 4;
+    bitmap.save("output-mango.png", options);
 }
 
 #endif
@@ -368,11 +370,11 @@ int main(int argc, const char* argv[])
 
     Bitmap bgra(filename, Format(32, Format::UNORM, Format::BGRA, 8, 8, 8, 8));
     Bitmap rgba(bgra, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
-    printf("image: %s (%d x %d)\n\n", filename, bgra.width, bgra.height);
 
     File file(filename);
     Buffer buffer(file);
 
+    printf("image: %d x %d (%d KB)\n", bgra.width, bgra.height, int(file.size() / 1024));
     printf("----------------------------------------------\n");
     printf("                load         save             \n");
     printf("----------------------------------------------\n");
