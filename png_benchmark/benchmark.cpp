@@ -318,6 +318,8 @@ void save_stb(const Bitmap& bitmap)
 
 void load_mango(Memory memory)
 {
+    // low-level decoding from memory
+    /*
     ImageDecoder decoder(memory, ".png");
 
     ImageHeader header = decoder.header();
@@ -325,6 +327,10 @@ void load_mango(Memory memory)
 
     ImageDecodeOptions options;
     decoder.decode(bitmap, options);
+    */
+
+    // higher-level "easy way"
+    Bitmap bitmap(memory, ".png");
 }
 
 void save_mango(const Bitmap& bitmap)
@@ -368,35 +374,34 @@ int main(int argc, const char* argv[])
 
     const char* filename = argv[1];
 
-    Bitmap bgra(filename, Format(32, Format::UNORM, Format::BGRA, 8, 8, 8, 8));
-    Bitmap rgba(bgra, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
+    Bitmap bitmap(filename, Format(32, Format::UNORM, Format::RGBA, 8, 8, 8, 8));
 
     File file(filename);
     Buffer buffer(file);
 
-    printf("image: %d x %d (%d KB)\n", bgra.width, bgra.height, int(file.size() / 1024));
+    printf("image: %d x %d (%d KB)\n", bitmap.width, bitmap.height, int(file.size() / 1024));
     printf("----------------------------------------------\n");
     printf("                load         save             \n");
     printf("----------------------------------------------\n");
 
 #if defined ENABLE_LIBPNG
-    test("libpng:  ", load_libpng, save_libpng, buffer, rgba);
+    test("libpng:  ", load_libpng, save_libpng, buffer, bitmap);
 #endif
 
 #if defined ENABLE_LODEPNG
-    test("lodepng: ", load_lodepng, save_lodepng, buffer, rgba);
+    test("lodepng: ", load_lodepng, save_lodepng, buffer, bitmap);
 #endif
 
 #if defined(ENABLE_SPNG)
-    test("spng:    ", load_spng, save_spng, buffer, rgba);
+    test("spng:    ", load_spng, save_spng, buffer, bitmap);
 #endif
 
 #if defined(ENABLE_STB)
-    test("stb:     ", load_stb, save_stb, buffer, rgba);
+    test("stb:     ", load_stb, save_stb, buffer, bitmap);
 #endif
 
 #if defined(ENABLE_MANGO)
-    test("mango:   ", load_mango, save_mango, buffer, bgra);
+    test("mango:   ", load_mango, save_mango, buffer, bitmap);
 #endif
 
 }
