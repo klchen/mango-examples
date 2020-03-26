@@ -176,6 +176,7 @@ Surface ocv_load_jpeg(const char* filename)
 #ifdef TEST_JPEG_COMPRESSOR
 
 #include "jpeg-compressor/jpgd.h"
+#include "jpeg-compressor/jpge.h"
 
 Surface jpgd_load(const char* filename)
 {
@@ -184,6 +185,11 @@ Surface jpgd_load(const char* filename)
     int comps;
     u8* image = jpgd::decompress_jpeg_image_from_file(filename, &width, &height, &comps, 4);
     return Surface(width, height, FORMAT_B8G8R8A8, width * 4, image);
+}
+
+void jpge_save(const char* filename, const Surface& surface)
+{
+    jpge::compress_image_to_jpeg_file(filename, surface.width, surface.height, 4, surface.image);
 }
 
 #endif
@@ -282,7 +288,7 @@ int main(int argc, const char* argv[])
 
     time1 = Time::us();
 
-    // NOTE: does not support encoding
+    jpge_save("output-jpge.jpg", s_jpgd);
 
     time2 = Time::us();
     print("jpgd:    ", time0, time1, time2);
