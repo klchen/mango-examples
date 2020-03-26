@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-add_executable(benchmark benchmark.cpp)
+add_executable(benchmark benchmark.cpp jpeg-compressor/jpgd.cpp jpeg-compressor/jpge.cpp)
 find_package(OpenCV REQUIRED)
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
     add_definitions (-mfpu=neon -mfloat-abi=hard)

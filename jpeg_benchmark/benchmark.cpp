@@ -9,7 +9,7 @@ using namespace mango::filesystem;
 
 #define TEST_STB
 //#define TEST_OCV
-//#define TEST_JPEG_COMPRESSOR
+#define TEST_JPEG_COMPRESSOR
 
 // ----------------------------------------------------------------------
 // warmup()
