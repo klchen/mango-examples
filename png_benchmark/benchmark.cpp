@@ -164,7 +164,7 @@ void save_lodepng(const Bitmap& bitmap)
 
 #if defined(ENABLE_SPNG)
 
-#include <spng.h>
+#include "spng/spng.h"
 
 struct read_fn_state
 {
