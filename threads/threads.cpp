@@ -331,7 +331,7 @@ int main(int argc, char* argv[])
         for (auto func : tests)
         {
             printf("------------------------------------------------------------\n");
-            printf(" test%d\n", ++index);
+            printf(" test%d\n", index++);
             printf("------------------------------------------------------------\n");
             printf("\n");
 
