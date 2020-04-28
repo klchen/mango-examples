@@ -12,7 +12,7 @@ void print(const char* text)
     fflush(stdout);
 }
 
-void test0()
+bool test0()
 {
     ConcurrentQueue q;
 
@@ -27,9 +27,12 @@ void test0()
             ++counter;
         });
     }
+
+    q.wait();
+    return counter.load() == icount;
 }
 
-void test1()
+bool test1()
 {
     ConcurrentQueue q;
     SerialQueue a;
@@ -98,15 +101,20 @@ void test1()
 
     u64 time3 = Time::us();
 
+    bool success = counter == icount * 2;
+
     printf("\n\n");
-    printf("counter: %d [%s]\n", counter.load(), counter == icount * 2 ? "Success" : "FAILED");
+    printf("counter: %d [%s]\n", counter.load(), success ? "Success" : "FAILED");
     printf("load latency: %d us\n", int(time1 - time0));
     printf("idle latency: %d us\n", int(time3 - time2));
+
+    return success;
 }
 
-void test2()
+bool test2()
 {
-    ConcurrentQueue q;
+    ConcurrentQueue a;
+    ConcurrentQueue b;
 
     u64 time0 = Time::ms();
 
@@ -117,11 +125,11 @@ void test2()
 
     for (u64 i = 0; i < icount; ++i)
     {
-        q.enqueue([&]
+        a.enqueue([&]
         {
             for (int j = 0; j < jcount; ++j)
             {
-                q.enqueue([&]
+                b.enqueue([&]
                 {
                     ++counter;
                 });
@@ -133,15 +141,20 @@ void test2()
 
     printf("enqueue counter: %d\n", counter.load());
 
-    q.wait();
+    a.wait();
+    b.wait();
 
     u64 time2 = Time::ms();
 
-    printf("counter: %d [%s]\n", counter.load(), counter == icount * jcount ? "Success" : "FAILED");
+    bool success = counter == icount * jcount;
+
+    printf("counter: %d [%s]\n", counter.load(), success ? "Success" : "FAILED");
     printf("enqueue: %d ms, execute: %d ms\n", int(time1 - time0), int(time2 - time1));
+
+    return success;
 }
 
-void test3()
+bool test3()
 {
     SerialQueue q;
 
@@ -180,11 +193,15 @@ void test3()
 
     u64 time2 = Time::ms();
 
-    printf("counter: %d [%s]\n", counter.load(), counter == icount * jcount ? "Success" : "FAILED");
+    bool success = counter == icount * jcount;
+
+    printf("counter: %d [%s]\n", counter.load(), success ? "Success" : "FAILED");
     printf("enqueue: %d ms, execute: %d ms\n", int(time1 - time0), int(time2 - time1));
+
+    return success;
 }
 
-void test4()
+bool test4()
 {
     ConcurrentQueue cq;
     SerialQueue sq;
@@ -225,7 +242,9 @@ void test4()
     cq.wait();
     sq.wait();
 
+    bool success = true;
     int errors = 0;
+
     for (int i = 0; i < result.size(); ++i)
     {
         if (i != result[i])
@@ -237,11 +256,13 @@ void test4()
     if (errors > 0 || overlaps.load() > 0)
     {
         printf("Status: ERROR \n");
-        exit(1);
+        success = false;
     }
+
+    return success;
 }
 
-void test5()
+bool test5()
 {
     std::atomic<int> counter { 0 };
 
@@ -268,10 +289,12 @@ void test5()
     a.wait();
     b.wait();
 
-    printf("counter: %d [%s]\n", counter.load(), counter == icount * jcount ? "Success" : "FAILED");
+    bool success = counter == icount * jcount;
+    printf("counter: %d [%s]\n", counter.load(), success ? "Success" : "FAILED");
+    return success;
 }
 
-void test6()
+bool test6()
 {
     std::atomic<int> acquire_counter { 0 };
     std::atomic<int> consume_counter { 0 };
@@ -300,6 +323,9 @@ void test6()
 
     printf("  acquire: %d\n", acquire_counter.load());
     printf("  consume: %d\n", consume_counter.load());
+
+    bool success = acquire_counter.load() == icount && consume_counter.load() == icount;
+    return success;
 }
 
 int main(int argc, char* argv[])
@@ -310,7 +336,7 @@ int main(int argc, char* argv[])
         count = std::atoi(argv[1]);
     }
 
-    using Function = void (*)(void);
+    using Function = bool (*)(void);
 
     Function tests [] =
     {
@@ -334,9 +360,13 @@ int main(int argc, char* argv[])
             printf("\n");
 
             u64 time0 = Time::ms();
-            func();
-
+            bool success = func();
             printf("\n <<<< complete: %d ms \n\n", int(Time::ms() - time0));
+
+            if (!success)
+            {
+                return 0;
+            }
         }
     }
 }
