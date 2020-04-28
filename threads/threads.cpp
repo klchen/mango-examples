@@ -31,9 +31,9 @@ void test0()
 
 void test1()
 {
-    ConcurrentQueue cq;
-    SerialQueue sa;
-    SerialQueue sb;
+    ConcurrentQueue q;
+    SerialQueue a;
+    SerialQueue b;
 
     std::atomic<int> counter { 0 };
 
@@ -41,32 +41,30 @@ void test1()
 
     for (u64 i = 0; i < icount; ++i)
     {
-        cq.enqueue([&]
+        q.enqueue([&]
         {
             std::this_thread::sleep_for(std::chrono::microseconds(100));
             print(".");
 
-            sa.enqueue([&]
+            a.enqueue([&]
             {
                 ++counter;
                 std::this_thread::sleep_for(std::chrono::microseconds(7));
                 print("1");
             });
 
-            sb.enqueue([&]
+            b.enqueue([&]
             {
                 ++counter;
                 std::this_thread::sleep_for(std::chrono::microseconds(2));
                 print("2");
             });
 
-#if 1
             if (i % 8 == 0)
             {
-                sa.wait();
-                sb.wait();
+                a.wait();
+                b.wait();
             }
-#endif
         });
     }
 
@@ -75,21 +73,20 @@ void test1()
     FutureTask<int> xtask([] () -> int {
         return 7;
     });
-
     int x = xtask.get();
 
     u64 time1 = Time::us();
 
     print("x");
 
-    cq.wait(); // producer must be synchronized first
+    q.wait(); // producer must be synchronized first
+    print("Q");
+
+    a.wait();
     print("A");
 
-    sa.wait();
+    b.wait();
     print("B");
-
-    sb.wait();
-    print("C");
 
     u64 time2 = Time::us();
 
@@ -97,7 +94,6 @@ void test1()
     {
         return 9;
     });
-
     int y = ytask.get();
 
     u64 time3 = Time::us();
@@ -247,20 +243,21 @@ void test4()
 
 void test5()
 {
-    ConcurrentQueue q;
-
     std::atomic<int> counter { 0 };
 
     constexpr u64 icount = 1'000'000 / 10;
     constexpr u64 jcount = 10;
 
+    ConcurrentQueue a;
+    ConcurrentQueue b;
+
     for (u64 i = 0; i < icount; ++i)
     {
-        q.enqueue([&]
+        a.enqueue([&]
         {
             for (int j = 0; j < jcount; ++j)
             {
-                q.enqueue([&]
+                b.enqueue([&]
                 {
                     ++counter;
                 });
@@ -268,7 +265,8 @@ void test5()
         });
     }
 
-    q.wait();
+    a.wait();
+    b.wait();
 
     printf("counter: %d [%s]\n", counter.load(), counter == icount * jcount ? "Success" : "FAILED");
 }
